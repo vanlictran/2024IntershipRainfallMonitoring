@@ -1,0 +1,396 @@
+[
+    {
+        "id": "f6f2187d.f17ca8",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "1facd3308bb19053",
+        "type": "mqtt-broker",
+        "name": "mqtt water-level",
+        "broker": "vngalaxy.vn",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "application/84/device/5729d561f083880c/event",
+        "birthQos": "0",
+        "birthRetain": "true",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "4f3a069624ee5425",
+        "type": "prometheus-metric-config",
+        "name": "water_level",
+        "help": "The current value of the water level in mm.",
+        "labels": "",
+        "mtype": "gauge"
+    },
+    {
+        "id": "92c11c23346244fd",
+        "type": "mqtt-broker",
+        "name": "mqtt rain-gauge",
+        "broker": "vngalaxy.vn",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "8326a81f43ce3ad0",
+        "type": "prometheus-metric-config",
+        "name": "rain_level",
+        "help": "The current value of the rain level in mm.",
+        "labels": "",
+        "mtype": "gauge"
+    },
+    {
+        "id": "7518b15f0071f657",
+        "type": "prometheus-metric-config",
+        "name": "humidity_level",
+        "help": "The humidity value given by the rain gauge in %",
+        "labels": "",
+        "mtype": "gauge"
+    },
+    {
+        "id": "348e1b9a15bcb9b8",
+        "type": "prometheus-metric-config",
+        "name": "temperature_level",
+        "help": "The temperature value given by the rain gauge in °C",
+        "labels": "",
+        "mtype": "gauge"
+    },
+    {
+        "id": "3cc11d24.ff01a2",
+        "type": "comment",
+        "z": "f6f2187d.f17ca8",
+        "name": "WARNING: please check you have started this container with a volume that is mounted to /data\\n otherwise any flow changes are lost when you redeploy or upgrade the container\\n (e.g. upgrade to a more recent node-red docker image).\\n  If you are using named volumes you can ignore this warning.\\n Double click or see info side panel to learn how to start Node-RED in Docker to save your work",
+        "info": "\nTo start docker with a bind mount volume (-v option), for example:\n\n```\ndocker run -it -p 1880:1880 -v /home/user/node_red_data:/data --name mynodered nodered/node-red\n```\n\nwhere `/home/user/node_red_data` is a directory on your host machine where you want to store your flows.\n\nIf you do not do this then you can experiment and redploy flows, but if you restart or upgrade the container the flows will be disconnected and lost. \n\nThey will still exist in a hidden data volume, which can be recovered using standard docker techniques, but that is much more complex than just starting with a named volume as described above.",
+        "x": 350,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "4fa24fd83e0d80e4",
+        "type": "mqtt in",
+        "z": "f6f2187d.f17ca8",
+        "name": "water-level-mqtt",
+        "topic": "application/84/device/5729d561f083880c/event/up",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "1facd3308bb19053",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 200,
+        "y": 340,
+        "wires": [
+            [
+                "14b280c2f46d0352"
+            ]
+        ]
+    },
+    {
+        "id": "14b280c2f46d0352",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "water level parsing function",
+        "func": "msg.payload = {\n    \"op\": \"set\",\n    \"val\": msg.payload.object.waterLevel,\n    \"labels\": {}\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 340,
+        "wires": [
+            [
+                "f673dd57172a45f6",
+                "cc3acfb9cc9f8f82"
+            ]
+        ]
+    },
+    {
+        "id": "f673dd57172a45f6",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 790,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "cc3acfb9cc9f8f82",
+        "type": "prometheus-exporter",
+        "z": "f6f2187d.f17ca8",
+        "name": "prometheus",
+        "metric": "4f3a069624ee5425",
+        "x": 790,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "7ab1fa97d9734ca8",
+        "type": "mqtt in",
+        "z": "f6f2187d.f17ca8",
+        "name": "rain-gauge-mqtt",
+        "topic": "application/84/device/70b3d57ed0061d6a/event/up",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "92c11c23346244fd",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 200,
+        "y": 580,
+        "wires": [
+            [
+                "87639b91bcb6bf57",
+                "52fb69ca27426e7c",
+                "259e5b5b26e1d62f",
+                "a5f285dbca4873a3"
+            ]
+        ]
+    },
+    {
+        "id": "87639b91bcb6bf57",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "rain parsing function",
+        "func": "msg.payload = {\n    \"op\": \"set\",\n    \"val\": msg.payload.object.data.rain,\n    \"labels\": {}\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 460,
+        "y": 580,
+        "wires": [
+            [
+                "340a5f8fca8d46a3",
+                "41ba1d2ef1c89eaf"
+            ]
+        ]
+    },
+    {
+        "id": "340a5f8fca8d46a3",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 810,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "41ba1d2ef1c89eaf",
+        "type": "prometheus-exporter",
+        "z": "f6f2187d.f17ca8",
+        "name": "prometheus",
+        "metric": "8326a81f43ce3ad0",
+        "x": 810,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "48d618e80c48c93f",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"object\":{\"waterLevel\":55}}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 240,
+        "wires": [
+            [
+                "14b280c2f46d0352"
+            ]
+        ]
+    },
+    {
+        "id": "52fb69ca27426e7c",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "humidity parsing function",
+        "func": "msg.payload = {\n    \"op\": \"set\",\n    \"val\": msg.payload.object.data.humidity,\n    \"labels\": {}\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 740,
+        "wires": [
+            [
+                "674d0cdc4985343e",
+                "37b4283b46c42fe6"
+            ]
+        ]
+    },
+    {
+        "id": "259e5b5b26e1d62f",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "temperature parsing function",
+        "func": "msg.payload = {\n    \"op\": \"set\",\n    \"val\": msg.payload.object.data.temperature,\n    \"labels\": {}\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 900,
+        "wires": [
+            [
+                "1407b82b363a3992",
+                "0e90b11e5d6b79ef"
+            ]
+        ]
+    },
+    {
+        "id": "674d0cdc4985343e",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 810,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "37b4283b46c42fe6",
+        "type": "prometheus-exporter",
+        "z": "f6f2187d.f17ca8",
+        "name": "prometheus",
+        "metric": "7518b15f0071f657",
+        "x": 810,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "1407b82b363a3992",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 810,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "0e90b11e5d6b79ef",
+        "type": "prometheus-exporter",
+        "z": "f6f2187d.f17ca8",
+        "name": "prometheus",
+        "metric": "348e1b9a15bcb9b8",
+        "x": 810,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "a5f285dbca4873a3",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 430,
+        "y": 460,
+        "wires": []
+    }
+]
