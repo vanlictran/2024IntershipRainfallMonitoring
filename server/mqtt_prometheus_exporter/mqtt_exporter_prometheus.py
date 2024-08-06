@@ -1,8 +1,14 @@
 import paho.mqtt.client as mqtt
 import json
 
+from prometheus_client import start_http_server, Gauge
+import time
+
 rain_data = {}
 water_level_data = {}
+
+rain_gauge = Gauge('rain_amount', 'Amount of rain measured', ['devEUI'])
+water_level_gauge = Gauge('water_level', 'Water level measured', ['devEUI'])
 
 # Callback when a message is received
 def on_message(client, userdata, message):
@@ -27,11 +33,13 @@ def on_message(client, userdata, message):
         # Update the global dictionary
         rain_value = payload['object']['data'].get('rain')
         rain_data[deveui] = rain_value
+        rain_gauge.labels(devEUI=deveui).set(rain_value)
         print(f"Updated rain data for devEUI '{deveui}': {rain_value}")
         
     elif payload['object'].get('waterLevel') is not None :
         water_level_value = payload['object'].get('waterLevel')
         water_level_data[deveui] = water_level_value
+        water_level_gauge.labels(devEUI=deveui).set(water_level_value)
         print(f"Updated water level data for devEUI '{deveui}': {water_level_value}")
 
 def on_connect(client, userdata, flags, reason_code, properties):
@@ -39,6 +47,9 @@ def on_connect(client, userdata, flags, reason_code, properties):
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
     client.subscribe("application/84/device/+/event/up")
+
+# Start Prometheus HTTP server
+start_http_server(8000)
 
 # Create an MQTT client instance
 mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
@@ -49,4 +60,12 @@ mqttc.on_message = on_message
 mqttc.connect("vngalaxy.vn", 1883, 60)
 
 # Start the loop to process network traffic
-mqttc.loop_forever()
+mqttc.loop_start()
+
+# Keep the script running to allow the Prometheus server to serve metrics
+try:
+    while True:
+        time.sleep(1)
+except KeyboardInterrupt:
+    print("Exiting...")
+    mqttc.loop_stop()

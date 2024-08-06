@@ -46,6 +46,14 @@ services:
       - "9100:9100"
     networks:
       - rainfall-network
+    
+  mqtt_prometheus_exporter:
+    build: mqtt_prometheus_exporter
+    container_name: mqtt_prometheus_exporter_rainfall
+    ports:
+      - "8000:8000"
+    networks:
+      - rainfall-network
 
 volumes:
   prom_data:
