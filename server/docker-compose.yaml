@@ -11,7 +11,7 @@ services:
       - ./prometheus:/etc/prometheus
       - prom_data:/prometheus
     networks:
-      - node-red-net-rainfall
+      - rainfall-network
 
   grafana:
     image: grafana/grafana
@@ -33,22 +33,7 @@ services:
       - ./grafana/datasources:/etc/grafana/provisioning/datasources
       - ./grafana/data:/var/lib/grafana
     networks:
-      - node-red-net-rainfall
-
-  node-red:
-    stdin_open: true
-    tty: true
-    ports:
-      - 1880:1880
-    environment:
-      - TZ=Asia/Ho_Chi_Minh
-      - FLOWS=flows.json
-    volumes:
-      - ./node-red-data:/data
-    container_name: mynodered_rainfall
-    image: nodered/node-red
-    networks:
-      - node-red-net-rainfall
+      - rainfall-network
 
   node-exporter:
     container_name: node_exporter_rainfall
@@ -60,11 +45,11 @@ services:
     ports:
       - "9100:9100"
     networks:
-      - node-red-net-rainfall
+      - rainfall-network
 
 volumes:
   prom_data:
   node-red-data:
 
 networks:
-  node-red-net-rainfall:
+  rainfall-network:
