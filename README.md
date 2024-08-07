@@ -20,7 +20,9 @@ We had encountered a few issues with these sensors :
 - The water level sensor is faulty, the measurement it give are false.
 - The rain gauge is not accurate enough to measure small quantity of rain, to trigger it we needed to pour a lot of water into it. But the other measurement it does are correct.
 
-These data are then transfered to an MQTT queue. These queue are consumed by our node-red docker image that scrap all the data from the messages and expose them to the /metrics endpoint of node-red for it to be scrapped by our prometheus container. It then serve as a datasource for our grafana dashboard.
+These data are then transfered to an MQTT queue. These queue are consumed by our mqtt-prometheus-exporter docker image that scrap all the data from the messages and expose them to the /metrics endpoint of the port 8000 for it to be scrapped by our prometheus container. It then serve as a datasource for our grafana dashboard.
+
+The mqtt-prometheus-exporter is a home made python script that is available in this repo if any modification is needed, it's not uploaded on docker hub or ghcr currently.
 
 Since it was required by our tutor to have dynamic threshold that can be modified at any moment by the consumer of these service, we used a node-exporter container to expose the value of the threshold to prometheus also. Node exporter take the value he expose from a text file that can be modified with the python script named **update_threshold.py** located in the folder with the docker images.
 
@@ -43,7 +45,7 @@ This github repository contains currently 2 main parts :
 
 The arduino folder contain a folder with the libraries and one with the actual code. The libraries are to copy paste in your Arduino/libraries folder to run the code locally.
 
-The server folder contain every file needed to run the grafana/prometheus/node-red/node-exporter stack, but to use the alerting on grafana you'll need to create a .env file similar to the .env.example provided but with the credentials of the mailgun account.
+The server folder contain every file needed to run the grafana/prometheus/mqtt-prometheus-exporter/node-exporter stack, but to use the alerting on grafana you'll need to create a .env file similar to the .env.example provided but with the credentials of the mailgun account.
 
 ## Requirements
 
@@ -77,10 +79,12 @@ The code we use for the water level do the measurement as explained in the code 
 To launch everything, just do `docker compose up` or if you don't want to see the logs `docker compose up -d` and then you'll have deployed :
 - grafana on port 3000
 - prometheus on port 9090
-- node-red on port 1880
+- mqtt-prometheus-exporter on port 8000
 - node-exporter on port 9100
 
 To modify the threshold for the alerting do `./update_threshold.py` or `python3 update_threshold.py` and then insert the new values for the threshold. To add new one you'll need to modify the python script but it's a simple one. The values are in the file server/node-exporter/initial_value.prom.
+
+The mqtt-prometheus-exporter can also be directly launched as a python script that will run forever in the background if the docker solution is not convenient for the user.
 
 ## Authors
 
