@@ -86,6 +86,22 @@ To modify the threshold for the alerting do `./update_threshold.py` or `python3 
 
 The mqtt-prometheus-exporter can also be directly launched as a python script that will run forever in the background if the docker solution is not convenient for the user.
 
+## Potential issues
+
+### Grafana permission or db issues
+
+When working with grafana, the docker image have a few requirements in term of permission and ownership of the ./server/grafana ./server/grafana/data folder and the file ./server/grafana/data/grafana.db. This lead to 2 potential problem, the first one is that these file should be on a file system who can handle permission on files, so no NTFS folder (normally used for windows). So these file should be either on an Unix distribution or on a WSL2 filesystem (Windows Subsystem for Linux) for those who aren't familiar with WSL or WSL2 it's easy to install and is really usefull for those who don't want to use a dual boot but want to enjoy linux benefit on windows.
+
+So once these file are in a non NTFS storage you can do the following command if any issue occur :
+- chmod 644 ./server/grafana/grafana.db
+- chmod 755 ./server/grafana
+- chmod 755 ./server/grafana/data
+- sudo chown -R 472:472 ./server/grafana
+- sudo chown -R 472:472 ./server/grafana/data
+- sudo chown -R 472:472 ./server/grafana/data/grafana.db
+
+These commands ensure the necessary file belong to the grafana user created by docker and that all these file are writable only by grafana user but are readable but by the other processes. Some also need execution right for other reason.
+
 ## Authors
 
 This work was solely done by :
