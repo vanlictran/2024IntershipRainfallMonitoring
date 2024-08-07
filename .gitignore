@@ -1,0 +1,46 @@
+# Ignore .env file
+.env
+
+# Ignore node_modules directory
+node_modules/
+
+# Ignore log files
+*.log
+logs/
+*.log.*
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+# Ignore build directories and files
+dist/
+build/
+
+# Ignore dependency directories
+node_modules/
+jspm_packages/
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Ignore compiled files
+*.o
+*.pyc
+*.pyo
+*.exe
+*.dll
+*.out
+
+# Ignore coverage reports
+coverage/
+*.lcov
+
+# Ignore test results
+*.spec.*
+*.test.*
