@@ -10,6 +10,7 @@ The main goal of this internship is the creation of a **rainfall monitoring and 
 - [Repository Structure](#repository-structure)
 - [Requirements](#requirements)
 - [Usage](#usage)
+- [Potential issues](#potential-issues)
 - [Authors](#authors)
 
 ## State of the project
