@@ -31,6 +31,8 @@ These threshold are used in the alerting system set in grafana and are currently
 
 Once the .env file set correctly, the alerting should work fine also.
 
+Thanks to the mqtt-prometheus-exporter script you can have as many rain gauge and water level as you want. Once it’s added on chirpstack and send data on the application 84 on the server it'll be added dynamically to prometheus and to the grafana dashboard and alerting.
+
 ## Components
 
 For this project we were given the following elements :
